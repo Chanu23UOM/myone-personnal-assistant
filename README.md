@@ -1,37 +1,37 @@
 # Personal AI Assistant
 
-Single-user Next.js dashboard: Google Calendar, Google Drive notes, tasks/deadlines,
-and a Gemini-powered AI layer (workflows, progress analysis, daily ideas, news digest).
-Full build plan in [`personal-ai-assistant-plan.md`](./personal-ai-assistant-plan.md).
+A single-user Next.js dashboard that pulls your day into one place — Google
+Calendar, Google Drive notes, tasks and deadlines — with a Gemini-powered AI
+layer on top that turns notes into workflows, tracks your progress, suggests
+daily ideas, and digests the news.
 
-## Setup
+## Features
 
-1. Fill in `.env.local` (see below for where each key comes from).
-2. Run the schema in `supabase/schema.sql` against your Supabase project's SQL editor.
-3. `npm install` (already done if you're reading this after the initial build).
-4. `npm run dev` and open [http://localhost:3000](http://localhost:3000).
+- **Google sign-in** — one account, with Calendar and Drive access
+- **Calendar** — view and quick-add events, synced with your real Google Calendar
+- **Notes** — stored as files in a dedicated Google Drive folder
+- **Tasks & deadlines** — with optional auto-sync to Calendar, grouped by week for semester planning
+- **AI layer (Gemini)**
+  - turn a note into a step-by-step workflow
+  - analyze your last 7 days of tasks
+  - suggest a daily idea based on your interests and deadlines
+  - rank and summarize real news headlines (never invented)
+- **Morning/nightly cron jobs** for a daily briefing and progress check, once deployed
 
-### `.env.local` — where each value comes from
+## Tech stack
 
-| Variable | Source |
-|---|---|
-| `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google Cloud Console → APIs & Services → Credentials (OAuth client, redirect URI `http://localhost:3000/api/auth/callback/google`) |
-| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) → Get API key |
-| `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Supabase project → Project Settings → API |
-| `NEWS_API_KEY` | [newsapi.org](https://newsapi.org) |
-| `CRON_SECRET` | any long random string — also set as the `Authorization: Bearer <value>` expectation once deployed to Vercel |
+Next.js (App Router) · TypeScript · Tailwind + shadcn/ui · NextAuth (Google) ·
+Supabase (Postgres) · Gemini API · Google Calendar/Drive APIs · NewsAPI
 
-## Structure
+## Getting started
 
-- `app/(app)/*` — authenticated pages (dashboard, calendar, notes, tasks, semester), guarded by `app/(app)/layout.tsx`.
-- `app/api/*` — route handlers (auth, calendar, notes, tasks, reminders, semester-notes, AI, cron).
-- `lib/` — Google/Supabase/Gemini clients, shared auth/session helpers.
-- `supabase/schema.sql` — run this once in the Supabase SQL editor.
-- `vercel.json` — cron schedule for the morning briefing / nightly progress jobs (only runs once deployed).
+1. Copy your credentials into `.env.local` (Google OAuth, Gemini, Supabase, NewsAPI).
+2. Run `supabase/schema.sql` in your Supabase project's SQL editor.
+3. `npm install && npm run dev` → [http://localhost:3000](http://localhost:3000)
+
+Full setup walkthrough and the original build plan: [`personal-ai-assistant-plan.md`](./personal-ai-assistant-plan.md).
 
 ## Deploying
 
-Not done yet — push to GitHub, import into Vercel, copy every `.env.local` value into
-Vercel's Environment Variables, and add the production callback URL in Google Cloud Console
-before going live.
+Push to GitHub → import into Vercel → copy `.env.local` into Vercel's Environment
+Variables → add the production redirect URI in Google Cloud Console.
